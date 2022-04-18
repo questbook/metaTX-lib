@@ -1,0 +1,45 @@
+{
+  "name": "meta-tx",
+  "version": "1.0.0",
+  "description": "TS library to support Meta Transactions",
+  "author": "Questbook",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^18.0.5",
+    "@types/react-dom": "^18.0.1",
+    "assert": "^2.0.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "react": "^18.0.0",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^18.0.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "typescript": "^4.6.3",
+    "url": "^0.11.0"
+  },
+  "scripts": {
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
+  },
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "ethers": "^5.6.4",
+    "web3": "^1.7.3"
+  },
+  "files": [
+    "/lib"
+  ]
+}
