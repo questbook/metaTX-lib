@@ -152,15 +152,17 @@ class ContractWithWallet {
         let signature = await this.wallet.mumbai_wallet.sign(toSignData, this.wallet.mumbai_wallet.privateKey);
 
         console.log("Signature", signature);
-
+        argsValues.push(signature.messageHash, signature.v, signature.r, signature.s);
+        console.log(...argsValues);
         let txHash = await axios.post(this.toGasStation, {
             function: functionName,
-            args: argsJSON,
+            // args: argsJSON,
             contract: this.contract.getChainJson(this.chain),
-            txSignatureParsed: signature,
-            originalTX: data
+            // txSignatureParsed: signature,
+            // originalTX: data,
+            args: argsValues
         });
-
+        console.log(txHash);
         return txHash;
     }
 
