@@ -6,25 +6,6 @@ import './App.css';
 
 const abi: Array<AbiItem> = [
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "executor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "onBehalfOf",
-				"type": "address"
-			}
-		],
-		"name": "MsgSender",
-		"type": "event"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -61,10 +42,29 @@ const abi: Array<AbiItem> = [
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "executor",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "onBehalfOf",
+				"type": "address"
+			}
+		],
+		"name": "MsgSender",
+		"type": "event"
 	}
 ]
 
-const contractAddress = "0xd4FB674F72B1b91B147CA8398Af5BEF6b73Fd9Af"
+const contractAddress = "0xaBE6F798CE83407BBf103e1C1454E1453b9C1148"
 
 function App() {
 	const [tx, setTx] = useState<string>();
@@ -82,11 +82,15 @@ function App() {
 		new_wallet.attachGasStation('questbook', 
 		'https://vq7xis18f6.execute-api.ap-south-1.amazonaws.com/v0/transaction')
 
+		new_wallet.attachGasStation('questbook_local', 
+		'http://localhost:3001/v0/transaction');
+
 		await new Promise(resolve => setTimeout(resolve, 1000));
 
 		let contract = new MetaContract();
 
 		contract.polygon(abi, contractAddress)
+        // contract.solana(abi, contractAddress);
 
 		let contractWithWallet = contract.attach(new_wallet);
 
@@ -94,7 +98,7 @@ function App() {
 		let response = await contractWithWallet
 			.on("polygon")
 			.to("questbook")
-			.execute("0xd4FB674F72B1b91B147CA8398Af5BEF6b73Fd9Af", 9);
+			.execute(contractAddress, 9);
 
 		await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -135,8 +139,8 @@ function App() {
 	return (
 		<div className="App">
 			<header className="App-header">
-				<button onClick={() => executeFunction()}>Create a transaction to execute</button>
-				<button onClick={() => handleExecuteFunction()}>Create a transaction to handleExecute</button>
+				<button className="execute-button"onClick={() => executeFunction()}>Create a transaction to execute</button>
+				{/* <button onClick={() => handleExecuteFunction()}>Create a transaction to handleExecute</button> */}
 				<a
 					className="App-link"
 					href="https://reactjs.org"

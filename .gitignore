@@ -5,9 +5,10 @@
 /example/node_modules
 /.pnp
 .pnp.js
-
+/.env
 # testing
 /coverage
+/src/relayers_config.json
 
 # production
 /build

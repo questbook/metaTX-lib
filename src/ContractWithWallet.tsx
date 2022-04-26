@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ethers } from 'ethers';
 import { MetaContract } from './MetaContract';
 import { MetaWallet } from './MetaWallet';
-import { ContractJson, ArgsJSON, AbiItem, ArgsNames } from './types/MetaContractTypes';
+import { ContractJson, ArgsJSON, AbiItem } from './types/MetaContractTypes';
 
 
 const abiCoder = new ethers.utils.AbiCoder();
@@ -128,21 +128,16 @@ class ContractWithWallet {
           ...
         }
         */
-        let argsNames: ArgsNames = argsJSON.reduce(
-            (obj, item) => Object.assign(obj, { [item.name]: item.value }), {}
-        );
+
+        // let argsNames: ArgsNames = argsJSON.reduce(
+        //     (obj, item) => Object.assign(obj, { [item.name]: item.value }), {}
+        // );
 
         // array with the params types (in the same order as in the function definition)
         let argsTypes: Array<string> = argsJSON.map((param) => (param["type"]));
 
         // array with the values of the params 
         let argsValues: Array<any> = argsJSON.map((param) => (param["value"]));
-
-        let data = {
-            ...argsNames,
-        };
-
-        console.log("DATA ", data);
 
         let toSignData = abiCoder.encode(
             argsTypes,
@@ -151,18 +146,14 @@ class ContractWithWallet {
 
         let signature = await this.wallet.mumbai_wallet.sign(toSignData, this.wallet.mumbai_wallet.privateKey);
 
-        console.log("Signature", signature);
         argsValues.push(signature.messageHash, signature.v, signature.r, signature.s);
-        console.log(...argsValues);
+
         let txHash = await axios.post(this.toGasStation, {
             function: functionName,
-            // args: argsJSON,
             contract: this.contract.getChainJson(this.chain),
-            // txSignatureParsed: signature,
-            // originalTX: data,
             args: argsValues
         });
-        console.log(txHash);
+        
         return txHash;
     }
 
