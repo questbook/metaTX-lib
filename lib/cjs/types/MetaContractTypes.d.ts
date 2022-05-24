@@ -7,6 +7,7 @@ export interface ArgsNames {
     [key: string]: any;
 }
 export interface AbiInputsItem {
+    components?: Array<any>;
     internalType: string;
     name: string;
     type: string;
@@ -23,4 +24,7 @@ export interface AbiItem {
 export interface ContractJson {
     abi: Array<AbiItem>;
     address: string;
+}
+export interface ContractsJson {
+    [chain: string]: ContractJson | null;
 }

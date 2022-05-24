@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { ethers } from 'ethers';
+// import { ethers } from 'ethers';
 import { MetaContract } from './MetaContract';
 import { MetaWallet } from './MetaWallet';
 import { ContractJson, ArgsJSON, AbiItem } from './types/MetaContractTypes';
 
 
-const abiCoder = new ethers.utils.AbiCoder();
+// const abiCoder = new ethers.utils.AbiCoder();
 
 function enableNoSuchMethod(obj: ContractWithWallet) {
     return new Proxy(obj, {
@@ -64,7 +64,7 @@ class ContractWithWallet {
 
         let contractABI: Array<AbiItem> = contractJSON.abi;
         let contractAddress: string = contractJSON.address;
-
+        
         // get the function definition
         let functionABIs = contractABI.filter(function (item: AbiItem) {
             return item.name === name && item.type === "function";
@@ -75,24 +75,12 @@ class ContractWithWallet {
 
         let functionABI: AbiItem = functionABIs[0];
 
-        // minus 4 because of the (hash, v, r, s)
-        // let actualNumParams = functionABI.inputs.length - 4;
+        let actualNumParams = functionABI.inputs.length ;
 
-        // if (actualNumParams !== args.length)
-        //   throw new Error(`Invalid number of arguments! \nExpected ${functionABI.inputs.length} but instead got ${args.length}`)
+        if (actualNumParams !== args.length)
+          throw new Error(`Invalid number of arguments! \nExpected ${functionABI.inputs.length} but instead got ${args.length}`)
 
         // TODO check for types validity
-
-        // for (let i = 0; i < args.length; i += 1) {
-        //   if (functionABI.inputs[i].type === "address") 
-        //     assert(args[i][0] === "0" && args[i][1] === "x", `The parameter ${functionABI.inputs[i].name} should be of type address!`) 
-
-        //   if(functionABI.inputs[i].type === "string")
-        //     assert(typeof(args[i]) === String, `The parameter ${functionABI.inputs[i].name} should be of type string!`)
-
-        //   if(["uint", "uint8", "uin"]functionABI.inputs[i].type === "uint" || )
-
-        // }
 
         let argsJSON: ArgsJSON[] = args.map((value: any, index: number) => {
             return {
@@ -113,6 +101,7 @@ class ContractWithWallet {
      * @param {ArgsJSON[]} argsJSON - Arguments of the function to execute
      * @returns 
      */
+
     async sendSignedTransaction(functionName: string, argsJSON: ArgsJSON[]) {
 
         if (!this.toGasStation)
@@ -121,39 +110,20 @@ class ContractWithWallet {
         if (!this.chain)
             throw new Error("No chain specified");
 
-        /* contains a key pair where 
-        {
-          param1_name: param1_value,
-          param2_name: param2_value,
-          ...
-        }
-        */
-
-        // let argsNames: ArgsNames = argsJSON.reduce(
-        //     (obj, item) => Object.assign(obj, { [item.name]: item.value }), {}
-        // );
-
         // array with the params types (in the same order as in the function definition)
         let argsTypes: Array<string> = argsJSON.map((param) => (param["type"]));
 
         // array with the values of the params 
         let argsValues: Array<any> = argsJSON.map((param) => (param["value"]));
 
-        let toSignData = abiCoder.encode(
-            argsTypes,
-            argsValues,
-        )
-
-        let signature = await this.wallet.mumbai_wallet.sign(toSignData, this.wallet.mumbai_wallet.privateKey);
-
-        argsValues.push(signature.messageHash, signature.v, signature.r, signature.s);
+        let finalArgs: any = this.wallet.getSignedTX(argsTypes, argsValues, functionName, "Fdsa");
 
         let txHash = await axios.post(this.toGasStation, {
             function: functionName,
             contract: this.contract.getChainJson(this.chain),
-            args: argsValues
+            args: finalArgs
         });
-        
+
         return txHash;
     }
 

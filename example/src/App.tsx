@@ -6,44 +6,6 @@ import './App.css';
 
 const abi: Array<AbiItem> = [
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "txHash",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint8",
-				"name": "v",
-				"type": "uint8"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "r",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "s",
-				"type": "bytes32"
-			}
-		],
-		"name": "execute",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -61,10 +23,29 @@ const abi: Array<AbiItem> = [
 		],
 		"name": "MsgSender",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "execute",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ]
 
-const contractAddress = "0xaBE6F798CE83407BBf103e1C1454E1453b9C1148"
+// const contractAddress = "0xaBE6F798CE83407BBf103e1C1454E1453b9C1148" Old gasless contract
+const contractAddress = "0x810037e1E5d0cd94de87632c37Cdc97502731b28"; // With struct Signature
 
 function App() {
 	const [tx, setTx] = useState<string>();
@@ -89,15 +70,15 @@ function App() {
 
 		let contract = new MetaContract();
 
-		contract.polygon(abi, contractAddress)
-        // contract.solana(abi, contractAddress);
+		// contract.polygon(abi, contractAddress)
+        contract.ethereum(abi, contractAddress);
 
 		let contractWithWallet = contract.attach(new_wallet);
 
 		setTx("Submitting gasless transaction ...");
 		let response = await contractWithWallet
-			.on("polygon")
-			.to("questbook")
+			.on("ethereum")
+			.to("questbook_local")
 			.execute(contractAddress, 9);
 
 		await new Promise(resolve => setTimeout(resolve, 1000));

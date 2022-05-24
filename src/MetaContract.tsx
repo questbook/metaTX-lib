@@ -1,18 +1,43 @@
-import { ContractJson, AbiItem } from './types/MetaContractTypes';
+import { ContractJson, AbiItem, ContractsJson } from './types/MetaContractTypes';
 import { MetaWallet } from './MetaWallet';
 import { ContractWithWallet } from './ContractWithWallet';
+
+function enableNoSuchMethod(obj: MetaContract) {
+    return new Proxy(obj, {
+        get(target, p: string) {
+            if (p in target) {
+                return target[p];
+            }
+            else if (target["supportedChains"].includes(p.toLowerCase())) {
+                return async function (...args: any) {
+                    let newArgs = [p];
+                    newArgs.push(...args);
+                    return await target.addChain.call(target, ...newArgs);
+                }
+            }
+            else {
+                return function (...args: any) {
+                    return target.__noSuchMethod__.call(target, p, args);
+                }
+            }
+        }
+    });
+}
 
 class MetaContract {
 
     // Store different chains' contracts information
-    polygonContract: ContractJson | null;
-    optimismContract: ContractJson | null;
-    solanaContract: ContractJson | null;
+    private supportedChains = ["ethereum", "polygon"] as Array<string>; 
+    contract = {} as ContractsJson;
+    [key: string]: any;
+    __noSuchMethod__: () => void;
 
     constructor() {
-        this.polygonContract = null;
-        this.optimismContract = null;
-        this.solanaContract = null;
+        this.supportedChains.forEach((chain: string) => { this.contract[chain] = null; });
+        this.__noSuchMethod__ = function (): void {
+            throw new Error("No such function / Chain provided is not supported yet!");
+        }
+        return enableNoSuchMethod(this);
     }
 
     /**
@@ -23,12 +48,23 @@ class MetaContract {
      * @returns {void}
      * 
     */
-    polygon(abi: Array<AbiItem>, contractAddress: string) {
-        this.polygonContract = {
+    addChain(chain: string, abi: Array<AbiItem>, contractAddress: string): void {
+        console.log(chain, abi, contractAddress);
+        this.contract[chain] = {
             abi: abi,
             address: contractAddress
         }
     }
+
+    /**
+     * Sets the polygon chain contract
+     * 
+     * @param {Array<AbiItem>} abi - The contract's ABI
+     * @param {string} contractAddress - The contract's address
+     * @returns {void}
+     * 
+    */
+
 
     /**
      * Gets the information about the contract for a given chain
@@ -37,13 +73,7 @@ class MetaContract {
      * @returns {ContractJson | null} - Contract details (abi, ContractAddress)
      */
     getChainJson(chain: string): ContractJson | null {
-        if (chain === "polygon") {
-            return this.polygonContract;
-        }
-        if (chain === "optimism") {
-            return this.optimismContract;
-        }
-        return null;
+        return this.contract[chain];
     }
 
     /**

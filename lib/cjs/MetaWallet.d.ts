@@ -3,7 +3,7 @@ declare class MetaWallet {
     gasStations: {
         [key: string]: string;
     };
-    mumbai_wallet: any;
+    wallets: any;
     constructor();
     /**
      * Attach a gas station with this wallet to so it can be used
@@ -14,5 +14,6 @@ declare class MetaWallet {
      * @returns {void}
      */
     attachGasStation: (gas_station: string, api_key: string) => void;
+    getSignedTX(argsTypes: Array<string>, argsValues: Array<any>): Promise<any[]>;
 }
 export { MetaWallet };

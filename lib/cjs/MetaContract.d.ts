@@ -1,10 +1,11 @@
-import { ContractJson, AbiItem } from './types/MetaContractTypes';
+import { ContractJson, AbiItem, ContractsJson } from './types/MetaContractTypes';
 import { MetaWallet } from './MetaWallet';
 import { ContractWithWallet } from './ContractWithWallet';
 declare class MetaContract {
-    polygonContract: ContractJson | null;
-    optimismContract: ContractJson | null;
-    solanaContract: ContractJson | null;
+    private supportedChains;
+    contract: ContractsJson;
+    [key: string]: any;
+    __noSuchMethod__: () => void;
     constructor();
     /**
      * Sets the polygon chain contract
@@ -14,7 +15,15 @@ declare class MetaContract {
      * @returns {void}
      *
     */
-    polygon(abi: Array<AbiItem>, contractAddress: string): void;
+    addChain(chain: string, abi: Array<AbiItem>, contractAddress: string): void;
+    /**
+     * Sets the polygon chain contract
+     *
+     * @param {Array<AbiItem>} abi - The contract's ABI
+     * @param {string} contractAddress - The contract's address
+     * @returns {void}
+     *
+    */
     /**
      * Gets the information about the contract for a given chain
      *
