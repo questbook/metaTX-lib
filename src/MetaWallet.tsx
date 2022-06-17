@@ -1,11 +1,22 @@
-import { Web3Rinkeby } from './contexts/web3';
-import Web3 from "web3";
 import { ethers } from 'ethers';
+import { Biconomy } from "@biconomy/mexa";
 
+let EIP712_SAFE_TX_TYPE = {
+    // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
+    SafeTx: [
+      { type: "address", name: "to" },
+      { type: "uint256", name: "value" },
+      { type: "bytes", name: "data" },
+      { type: "uint8", name: "operation" },
+      { type: "uint256", name: "safeTxGas" },
+      { type: "uint256", name: "baseGas" },
+      { type: "uint256", name: "gasPrice" },
+      { type: "address", name: "gasToken" },
+      { type: "address", name: "refundReceiver" },
+      { type: "uint256", name: "nonce" },
+    ],
+  };
 const abiCoder = new ethers.utils.AbiCoder();
-
-// const web3Mumbai: Web3 = Web3Mumbai;
-const web3Rinkeby: Web3 = Web3Rinkeby;
 
 class MetaWallet{
     address: string;
@@ -25,7 +36,7 @@ class MetaWallet{
 
         // if (privateKey === null)
         //     localStorage.setItem('privateKey', this.mumbaiWallet.privateKey);
-        this.wallets["rinkeby"] = web3Rinkeby.eth.accounts.create();
+        this.wallets["rinkeby"] = ethers.Wallet.createRandom();
         this.address = this.wallets["rinkeby"].address;
         this.gasStations = {};
     }
@@ -44,35 +55,7 @@ class MetaWallet{
 
     async getSignedTX(argsTypes: Array<string>, argsValues: Array<any>, functionName: string, functionParamsInterface: string) {
 
-        let toSignData = abiCoder.encode(
-            argsTypes,
-            argsValues,
-        );
-
-        let signature = await this.wallets["rinkeby"].sign(toSignData, this.wallets["rinkeby"].privateKey);
-
-        const functionInterface = new ethers.utils.Interface([
-            "function " + functionName + functionParamsInterface
-        ])
-
-        const data = functionInterface.encodeFunctionData(
-            functionName, argsValues
-        )
-
-        let newArgsTypes = ["tuple(bytes32, uint8, bytes32, bytes32)"];
-        newArgsTypes.push(...argsTypes);
-
-        let newArgsValues = [[signature.messageHash, signature.v, signature.r, signature.s]];
-        newArgsValues.push(...argsValues);
-        
-        let gaslessArgs = abiCoder.encode(
-            newArgsTypes,
-            newArgsValues
-        );
-
-        let newData = data.substring(0, 10) + gaslessArgs.substring(2);
-
-        return newData;
+       
     }
 
 };

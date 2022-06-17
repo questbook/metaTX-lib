@@ -61,7 +61,7 @@ function App() {
 		setTx("Attaching 'questbook' relayer to the wallet")
 
 		new_wallet.attachGasStation('questbook', 
-		'https://vq7xis18f6.execute-api.ap-south-1.amazonaws.com/v0/transaction')
+		'https://vq7xis18f6.execute-api.ap-south-1.amazonaws.com/v0/transaction');
 
 		new_wallet.attachGasStation('questbook_local', 
 		'http://localhost:3001/v0/transaction');
