@@ -102,6 +102,10 @@ class ContractWithWallet {
      * @returns 
      */
 
+    // @TODO: implement a buildExecTransaction Method to build the transaction
+    // by sending a post request to the server
+
+    // @TODO: Check what needs to be modified here to work with the biconomy
     async sendSignedTransaction(functionName: string, argsJSON: ArgsJSON[]) {
 
         if (!this.toGasStation)
@@ -133,7 +137,7 @@ class ContractWithWallet {
      * @param {string} gas_station - Name of gas station
      * @returns {ContractWithWallet}
      */
-    to(gas_station: string) {
+    to(gas_station: string): ContractWithWallet {
         this.toGasStation = this.wallet.gasStations[gas_station];
         return this;
     }
@@ -144,7 +148,7 @@ class ContractWithWallet {
      * @param {string} chain - Name of the chain
      * @returns {ContractWithWallet}
      */
-    on(chain: string) {
+    on(chain: string): ContractWithWallet {
         this.chain = chain;
         return this;
     }

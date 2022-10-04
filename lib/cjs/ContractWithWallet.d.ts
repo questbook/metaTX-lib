@@ -32,13 +32,13 @@ declare class ContractWithWallet {
      * @param {string} gas_station - Name of gas station
      * @returns {ContractWithWallet}
      */
-    to(gas_station: string): this;
+    to(gas_station: string): ContractWithWallet;
     /**
      * Sets the chain to use
      *
      * @param {string} chain - Name of the chain
      * @returns {ContractWithWallet}
      */
-    on(chain: string): this;
+    on(chain: string): ContractWithWallet;
 }
 export { ContractWithWallet };

@@ -41,7 +41,7 @@ class MetaContract {
     }
 
     /**
-     * Sets the polygon chain contract
+     * Adds a generic chain contract
      * 
      * @param {Array<AbiItem>} abi - The contract's ABI
      * @param {string} contractAddress - The contract's address
@@ -55,16 +55,6 @@ class MetaContract {
             address: contractAddress
         }
     }
-
-    /**
-     * Sets the polygon chain contract
-     * 
-     * @param {Array<AbiItem>} abi - The contract's ABI
-     * @param {string} contractAddress - The contract's address
-     * @returns {void}
-     * 
-    */
-
 
     /**
      * Gets the information about the contract for a given chain

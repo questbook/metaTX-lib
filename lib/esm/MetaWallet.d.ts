@@ -14,6 +14,11 @@ declare class MetaWallet {
      * @returns {void}
      */
     attachGasStation: (gas_station: string, api_key: string) => void;
-    getSignedTX(argsTypes: Array<string>, argsValues: Array<any>, functionName: string, functionParamsInterface: string): Promise<void>;
+    getSignedTX(argsTypes: Array<string>, argsValues: Array<any>, functionName: string, functionParamsInterface: string): Promise<{
+        argsTypes: string[];
+        argsValues: any[];
+        functionName: string;
+        functionParamsInterface: string;
+    }>;
 }
 export { MetaWallet };
