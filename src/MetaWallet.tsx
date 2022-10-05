@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 
 // let EIP712_SAFE_TX_TYPE = {
 //     // "SafeTx(address to,uint256 value,bytes data,uint8 operation,uint256 safeTxGas,uint256 baseGas,uint256 gasPrice,address gasToken,address refundReceiver,uint256 nonce)"
@@ -17,26 +17,30 @@ import { ethers } from 'ethers';
 //   };
 // const abiCoder = new ethers.utils.AbiCoder();
 
-class MetaWallet{
+class MetaWallet {
     address: string;
     gasStations: {
         [key: string]: string
     };
-    wallets = {} as any;
+    webWallet: Wallet;
 
     constructor() {
-        // const privateKey: string | null = ""; //localStorage.getItem('privateKey');
-        
-        // create a wallet from localstorage privateKey
-        // or create a new one if no privateKey is found
-        // this.mumbaiWallet = privateKey != null
-        //     ? web3Mumbai.eth.accounts.privateKeyToAccount(privateKey)
-        //     : web3Mumbai.eth.accounts.create();
-
-        // if (privateKey === null)
-        //     localStorage.setItem('privateKey', this.mumbaiWallet.privateKey);
-        this.wallets["rinkeby"] = ethers.Wallet.createRandom();
-        this.address = this.wallets["rinkeby"].address;
+        ///creating a new Wallet if no privateKey is found in the localStorage
+        const privateKey: string | null = localStorage.getItem('webwalletPrivateKey');
+        let newWebWallet: Wallet = Wallet.createRandom();
+        if (!privateKey) {
+            localStorage.setItem('webwalletPrivateKey', newWebWallet.privateKey);
+        }
+        ///creating a wallet from localStorage privateKey
+        else {
+            try {
+                newWebWallet = new Wallet(privateKey);
+            } catch {
+                localStorage.setItem('webwalletPrivateKey', newWebWallet.privateKey);
+            }
+        }
+        this.webWallet = newWebWallet;
+        this.address = newWebWallet.address;
         this.gasStations = {};
     }
 
@@ -57,9 +61,9 @@ class MetaWallet{
     // @TODO: get the right way to sign the transaction based on biconomy
     async getSignedTX(argsTypes: Array<string>, argsValues: Array<any>, functionName: string, functionParamsInterface: string) {
 
-        let x = {argsTypes, argsValues, functionName, functionParamsInterface};
+        let x = { argsTypes, argsValues, functionName, functionParamsInterface };
         return x;
-       
+
     }
 
 };
