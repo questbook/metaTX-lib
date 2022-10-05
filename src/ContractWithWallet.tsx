@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import { ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { MetaContract } from './MetaContract';
 import { MetaWallet } from './MetaWallet';
 import { ContractJson, ArgsJSON, AbiItem } from './types/MetaContractTypes';
