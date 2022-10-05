@@ -25,13 +25,13 @@ class MetaWallet {
     webWallet: Wallet;
 
     constructor() {
-        ///creating a new Wallet if no privateKey is found
+        ///creating a new Wallet if no privateKey is found in the localStorage
         const privateKey: string | null = localStorage.getItem('webwalletPrivateKey');
         let newWebWallet: Wallet = Wallet.createRandom();
         if (!privateKey) {
             localStorage.setItem('webwalletPrivateKey', newWebWallet.privateKey);
         }
-        ///creating a wallet from localstorage privateKey
+        ///creating a wallet from localStorage privateKey
         else {
             try {
                 newWebWallet = new Wallet(privateKey);
